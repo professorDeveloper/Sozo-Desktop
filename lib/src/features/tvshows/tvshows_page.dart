@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 
-class TvshowsPage extends StatefulWidget {
-  const TvshowsPage({super.key});
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
 
   @override
-  State<TvshowsPage> createState() => _TvshowsPageState();
+  State<SearchScreen> createState() => _TvshowsPageState();
 }
 
-class _TvshowsPageState extends State<TvshowsPage> {
+class _TvshowsPageState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return const Placeholder();

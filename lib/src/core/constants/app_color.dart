@@ -1,19 +1,13 @@
 import 'package:flutter/cupertino.dart';
 
-class AppColor {
-  static Color red = CupertinoColors.systemRed;
-  static Color kPrimaryColor = Color(0XFF0866FF);
-  static Color kPrimary2Color = Color(0xFFE0EFFF);
-  static Color white = const Color(0XFFFFFFFF);
-  static Color black = const Color(0XFF000000);
-  static Color grey = const Color(0XFF6B7073);
-  static Color lightGrey = const Color(0XFFE3E8EB);
-  static Color lightBlue = const Color(0XFFEFF3F6);
-  static Color lightGreyBlue = const Color(0XFFC5CACD);
-  static Color lightGreen = const Color(0XFF08FFD6);
-  static Color blueMain = const Color(0xFF0866FF);
-  static Color greyBg= const Color(0xFFEFF2F5);
-  static Color darkGrey = const Color(0XFF93989B);
-  static Color darkBlue = const Color(0XFF33597C);
+class AppColors {
+  static Color backgroundColor=const Color(0xff1a1d24);
+  static Color black =const Color(0xff000000);
+  static const Color Red=Color(0xffD31A1F);
+  static const Color White=Color(0xffFFFFFF);
+  static const Color Red2=Color(0xffFE4545);
+  static const Color Gray2=Color(0xff8C9598);
+  static const Color Gray3=Color(0xff4C5558);
+
 
 }
