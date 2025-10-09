@@ -5,7 +5,14 @@ class Assets {
   static const String iconsCategories = 'assets/icons/categories.svg';
   static const String iconsHomeIcon = 'assets/icons/home_icon.svg';
   static const String iconsProfile = 'assets/icons/profile.svg';
+  static const String iconsSearchicon = 'assets/icons/searchicon.png';
+  static const String iconsTreyler = 'assets/icons/treyler.svg';
   static const String iconsTv = 'assets/icons/tv.svg';
+  static const String iconsTvicon = 'assets/icons/tvicon.svg';
+  static const String iconsUsers = 'assets/icons/users.svg';
+  static const String iconsUzumbank = 'assets/icons/uzumbank.png';
+  static const String iconsWalleticon = 'assets/icons/walleticon.svg';
+  static const String iconsWishlist = 'assets/icons/wishlist.svg';
   static const String imagesImg = 'assets/images/img.png';
 
 }

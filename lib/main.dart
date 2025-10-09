@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sozodesktop/src/di/get_it.dart';
 import 'package:sozodesktop/src/features/main/screen/main_screen.dart';
-
+import 'package:sozodesktop/src/features/search/screen/search_screen.dart';
 void main() {
+  setupDependencies();
   runApp(const MyApp());
 }
 

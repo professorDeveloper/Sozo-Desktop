@@ -10,4 +10,6 @@ class AppImages {
   static  const String grocery='assets/images/grocery.png';
   static const String loginbg='assets/images/loginbg.png';
   static const String massage ='assets/images/massage.png';
+  static const String searchIcon = 'assets/icons/searchicon.png';
+
 }
