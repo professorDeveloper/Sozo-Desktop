@@ -1,7 +1,8 @@
-class Tv{
-  String name;
-  String iamgeurl;
+class Tv {
+  final String name;
+  final String iamgeurl;
+  final String country;
+  final String genre;
 
-  Tv(this.name, this.iamgeurl);
-
+  Tv({required this.name, required this.iamgeurl, required this.country, required this.genre});
 }

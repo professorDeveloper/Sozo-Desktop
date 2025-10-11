@@ -7,6 +7,7 @@ import 'package:sozodesktop/src/features/search/bloc/search_bloc.dart';
 import 'package:sozodesktop/src/features/search/screen/search_screen.dart';
 import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sozodesktop/src/features/tv/bloc/channel_bloc.dart';
 import 'package:sozodesktop/src/features/tv/tv_page.dart';
 import '../../../di/get_it.dart';
 import '../../categories/categories_page.dart';
@@ -39,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
     ),
 
     BlocProvider(
-      create: (context) => getIt<HomeBloc>(),
+      create: (context) => getIt<ChannelBloc>(),
       child: const TvScreen(), // Reused for settings; adjust if needed
     ),
     BlocProvider(
