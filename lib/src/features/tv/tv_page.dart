@@ -25,8 +25,11 @@ class _TvScreenState extends State<TvScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ChannelBloc>().add(const LoadCategories());
-    context.read<ChannelBloc>().add(const LoadCountries());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bloc = context.read<ChannelBloc>();
+      bloc.add(const LoadCategories());
+      bloc.add(const LoadCountries());
+    });
   }
 
   @override

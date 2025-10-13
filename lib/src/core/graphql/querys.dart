@@ -120,3 +120,4 @@ query searchAnime(\$search: String) {
   }
 }
 ''';
+const String getGenres='''{GenreCollection}''';

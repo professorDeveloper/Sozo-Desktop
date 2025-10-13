@@ -84,16 +84,28 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
     _debounce?.cancel();
     _placeholderTimer?.cancel();
     _placeholderController.dispose();
+    _debounce?.cancel(); // ✅ Timer to‘xtatish
+    context.read().close(); // ✅ Bloc to‘xtatish
     super.dispose();
   }
+
 
   void _performSearch(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 400), () {
-      context.read<SearchBloc>().add(PerformSearch(query));
+      if (!mounted) return; // <-- sahifa o‘chirilgan bo‘lsa, qaytadi
+      if (mounted) {
+        context.read<SearchBloc>().add(PerformSearch(query));
+      }
+
+      final bloc = context.read<SearchBloc>();
+      if (!bloc.isClosed) { // <-- Bloc hali ochiqmi, tekshirish
+        bloc.add(PerformSearch(query));
+      }
     });
   }
+
 
   void _clearSearch() {
     _searchController.clear();

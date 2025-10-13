@@ -45,7 +45,7 @@ class _MainScreenState extends State<MainScreen> {
     ),
     BlocProvider(
       create: (context) => getIt<HomeBloc>(),
-      child: const CategoriesPage(),
+      child: const BrowseAnimePage(),
     ),
     BlocProvider(
       create: (context) => getIt<HomeBloc>(),
