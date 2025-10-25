@@ -203,37 +203,6 @@ class _TvScreenState extends State<TvScreen> {
                       const SizedBox(width: 16),
 
                       // Current Filter Type Indicator
-                      Container(
-                        height: 42,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: const Color(0x15FFFFFF),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: const Color(0x20FFFFFF),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              isCountryFilter ? Icons.public : Icons.category,
-                              color: Colors.white.withOpacity(0.7),
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              isCountryFilter ? 'Country' : 'Genre',
-                              style: AppStyle.rubik14White.copyWith(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white.withOpacity(0.9),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 16),
 
                       // Tabs List
                       Expanded(

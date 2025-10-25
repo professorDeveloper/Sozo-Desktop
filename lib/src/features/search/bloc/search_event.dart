@@ -9,6 +9,10 @@ sealed class SearchEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class FetchTrendingAnime extends SearchEvent {
+
+}
+
 class PerformSearch extends SearchEvent {
   final String query;
 

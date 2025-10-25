@@ -4,6 +4,7 @@ class Assets {
 
   static const String iconsCategories = 'assets/icons/categories.svg';
   static const String iconsHomeIcon = 'assets/icons/home_icon.svg';
+  static const String iconsPlay = 'assets/icons/play.svg';
   static const String iconsProfile = 'assets/icons/profile.svg';
   static const String iconsSearchicon = 'assets/icons/searchicon.png';
   static const String iconsTreyler = 'assets/icons/treyler.svg';
@@ -14,5 +15,6 @@ class Assets {
   static const String iconsWalleticon = 'assets/icons/walleticon.svg';
   static const String iconsWishlist = 'assets/icons/wishlist.svg';
   static const String imagesImg = 'assets/images/img.png';
+  static const String imagesJoker = 'assets/images/joker.png';
 
 }

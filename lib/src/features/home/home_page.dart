@@ -10,6 +10,8 @@ import 'package:sozodesktop/src/features/home/model/home_anime_model.dart';
 import '../../core/constants/app_color.dart';
 import 'dart:ui';
 
+import '../detail/details_screen.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -62,9 +64,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         builder: (context, state) {
           if (state is HomeLoading) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.redAccent,
-              ),
+              child: CircularProgressIndicator(color: Colors.redAccent),
             );
           } else if (state is HomeLoaded) {
             return SingleChildScrollView(
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   BannerCarousel(bannerItems: state.banners),
                   const SizedBox(height: 20),
                   // Trending Now with trending data from API
-                  _buildReccommendedSection( state.reccommended),
+                  _buildReccommendedSection(state.reccommended),
                   _buildMostFavouriteSection(state.mostFavourite),
                   _buildTrendingSection(state.trending),
                   // Recently Added with mostFavourite data from API
@@ -135,20 +135,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: [
               Text(
                 "Reccommended For You",
-                style: GoogleFonts.daysOne(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
+                style: GoogleFonts.daysOne(color: Colors.white, fontSize: 20),
               ),
               const Spacer(),
               TextButton(
                 onPressed: () {},
                 child: const Text(
                   "See All",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ),
             ],
@@ -158,36 +152,36 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             height: 300,
             child: ScrollConfiguration(
               behavior: ScrollConfiguration.of(context).copyWith(
-                dragDevices: {
-                  PointerDeviceKind.touch,
-                  PointerDeviceKind.mouse,
-                },
+                dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
               ),
               child: trendingItems.isEmpty
                   ? const Center(
-                child: Text(
-                  'No trending items available',
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
-                ),
-              )
+                      child: Text(
+                        'No trending items available',
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                      ),
+                    )
                   : ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: trendingItems.length > 20 ? 20 : trendingItems.length,
-                itemBuilder: (context, index) {
-                  final item = trendingItems[index];
-                  return _HoverableListItem(
-                    margin: const EdgeInsets.only(right: 22),
-                    width: 140,
-                    item: item,
-                  );
-                },
-              ),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: trendingItems.length > 20
+                          ? 20
+                          : trendingItems.length,
+                      itemBuilder: (context, index) {
+                        final item = trendingItems[index];
+                        return _HoverableListItem(
+                          margin: const EdgeInsets.only(right: 22),
+                          width: 140,
+                          item: item,
+                        );
+                      },
+                    ),
             ),
           ),
         ],
       ),
     );
   }
+
   Widget _buildMostFavouriteSection(List<HomeAnimeModel> trendingItems) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -199,20 +193,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: [
               Text(
                 "Most Favourite",
-                style: GoogleFonts.daysOne(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
+                style: GoogleFonts.daysOne(color: Colors.white, fontSize: 20),
               ),
               const Spacer(),
               TextButton(
                 onPressed: () {},
                 child: const Text(
                   "See All",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ),
             ],
@@ -222,36 +210,36 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             height: 300,
             child: ScrollConfiguration(
               behavior: ScrollConfiguration.of(context).copyWith(
-                dragDevices: {
-                  PointerDeviceKind.touch,
-                  PointerDeviceKind.mouse,
-                },
+                dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
               ),
               child: trendingItems.isEmpty
                   ? const Center(
-                child: Text(
-                  'No trending items available',
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
-                ),
-              )
+                      child: Text(
+                        'No trending items available',
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                      ),
+                    )
                   : ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: trendingItems.length > 20 ? 20 : trendingItems.length,
-                itemBuilder: (context, index) {
-                  final item = trendingItems[index];
-                  return _HoverableListItem(
-                    margin: const EdgeInsets.only(right: 22),
-                    width: 140,
-                    item: item,
-                  );
-                },
-              ),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: trendingItems.length > 20
+                          ? 20
+                          : trendingItems.length,
+                      itemBuilder: (context, index) {
+                        final item = trendingItems[index];
+                        return _HoverableListItem(
+                          margin: const EdgeInsets.only(right: 22),
+                          width: 140,
+                          item: item,
+                        );
+                      },
+                    ),
             ),
           ),
         ],
       ),
     );
   }
+
   Widget _buildTrendingSection(List<HomeAnimeModel> trendingItems) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -263,20 +251,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: [
               Text(
                 "Trending Now",
-                style: GoogleFonts.daysOne(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
+                style: GoogleFonts.daysOne(color: Colors.white, fontSize: 20),
               ),
               const Spacer(),
               TextButton(
                 onPressed: () {},
                 child: const Text(
                   "See All",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ),
             ],
@@ -286,37 +268,35 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             height: 300,
             child: ScrollConfiguration(
               behavior: ScrollConfiguration.of(context).copyWith(
-                dragDevices: {
-                  PointerDeviceKind.touch,
-                  PointerDeviceKind.mouse,
-                },
+                dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
               ),
               child: trendingItems.isEmpty
                   ? const Center(
-                child: Text(
-                  'No trending items available',
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
-                ),
-              )
+                      child: Text(
+                        'No trending items available',
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                      ),
+                    )
                   : ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: trendingItems.length > 20 ? 20 : trendingItems.length,
-                itemBuilder: (context, index) {
-                  final item = trendingItems[index];
-                  return _HoverableListItem(
-                    margin: const EdgeInsets.only(right: 22),
-                    width: 140,
-                    item: item,
-                  );
-                },
-              ),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: trendingItems.length > 20
+                          ? 20
+                          : trendingItems.length,
+                      itemBuilder: (context, index) {
+                        final item = trendingItems[index];
+                        return _HoverableListItem(
+                          margin: const EdgeInsets.only(right: 22),
+                          width: 140,
+                          item: item,
+                        );
+                      },
+                    ),
             ),
           ),
         ],
       ),
     );
   }
-
 
   Widget _buildFooterSection() {
     return LayoutBuilder(
@@ -348,33 +328,33 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       child: isDesktop
           ? Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            '© 2025 Sozo. All rights reserved.',
-            style: TextStyle(color: Colors.white60, fontSize: 14),
-          ),
-          const Text(
-            'give me a star on github ⭐ and follow us on telegram 🦄',
-            style: TextStyle(color: Colors.white60, fontSize: 14),
-          ),
-        ],
-      )
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '© 2025 Sozo. All rights reserved.',
+                  style: TextStyle(color: Colors.white60, fontSize: 14),
+                ),
+                const Text(
+                  'give me a star on github ⭐ and follow us on telegram 🦄',
+                  style: TextStyle(color: Colors.white60, fontSize: 14),
+                ),
+              ],
+            )
           : const Column(
-        children: [
-          Text(
-            '© 2024 AnimeStream. All rights reserved.',
-            style: TextStyle(color: Colors.white60, fontSize: 14),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Made with ❤️ for anime fans',
-            style: TextStyle(color: Colors.white60, fontSize: 14),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+              children: [
+                Text(
+                  '© 2024 AnimeStream. All rights reserved.',
+                  style: TextStyle(color: Colors.white60, fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Made with ❤️ for anime fans',
+                  style: TextStyle(color: Colors.white60, fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
     );
   }
 }
@@ -400,11 +380,12 @@ class _HoverableListItemState extends State<_HoverableListItem> {
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
-    print(item.coverImage.toString()  );
+    print(item.coverImage.toString());
     final title = item.title?.english ?? 'Unknown Title';
     final year = item.seasonYear?.toString() ?? 'N/A';
     final type = item.format ?? 'TV';
-    final imageUrl = (item.coverImage?.medium != null && item.coverImage!.medium!.isNotEmpty)
+    final imageUrl =
+        (item.coverImage?.medium != null && item.coverImage!.medium!.isNotEmpty)
         ? item.coverImage!.extraLarge!
         : 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/1-OquNCNB6srGe.jpg';
 
@@ -418,104 +399,115 @@ class _HoverableListItemState extends State<_HoverableListItem> {
           ..translate(0.0, isHovered ? -5.0 : 0.0),
         margin: widget.margin,
         width: widget.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              height: 230,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: isHovered
-                    ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.4),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ]
-                    : [],
-                image: DecorationImage(
-                  image: CachedNetworkImageProvider(imageUrl),
-                  fit: BoxFit.cover,
-                ),
+        child: GestureDetector(
+          onTap: () {
+            // Handle item tap
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailsScreen(),
               ),
-              child: isHovered
-                  ? Container(
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                height: 230,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.3),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+                  boxShadow: isHovered
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.4),
+                            blurRadius: 15,
+                            offset: const Offset(0, 8),
+                          ),
+                        ]
+                      : [],
+                  image: DecorationImage(
+                    image: CachedNetworkImageProvider(imageUrl),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.play_circle_filled,
-                    color: Colors.white,
-                    size: 50,
-                  ),
-                ),
-              )
-                  : null,
-            ),
-            const SizedBox(height: 7),
-            SizedBox(
-              height: 20,
-              child: Marquee(
-                text: title,
-                style: GoogleFonts.daysOne(
-                  color: isHovered ? Colors.white : Colors.white,
-                  fontSize: 14,
-                  fontWeight: isHovered ? FontWeight.bold : FontWeight.normal,
-                ),
-                scrollAxis: Axis.horizontal,
-                blankSpace: 40.0,
-                velocity: 30.0,
-                pauseAfterRound: const Duration(seconds: 1),
-                startPadding: 0.0,
+                child: isHovered
+                    ? Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.3),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.play_circle_filled,
+                            color: Colors.white,
+                            size: 50,
+                          ),
+                        ),
+                      )
+                    : null,
               ),
-            ),
-            const SizedBox(height: 6),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.calendar_month,
-                  color: isHovered ? Colors.white : Colors.white70,
-                  size: 13,
-                ),
-                const SizedBox(width: 2),
-                Text(
-                  year,
-                  style: GoogleFonts.rubik(
-                    color: isHovered ? Colors.white : Colors.white70,
-                    fontSize: 12,
+              const SizedBox(height: 7),
+              SizedBox(
+                height: 20,
+                child: Marquee(
+                  text: title,
+                  style: GoogleFonts.daysOne(
+                    color: isHovered ? Colors.white : Colors.white,
+                    fontSize: 14,
+                    fontWeight: isHovered ? FontWeight.bold : FontWeight.normal,
                   ),
+                  scrollAxis: Axis.horizontal,
+                  blankSpace: 40.0,
+                  velocity: 30.0,
+                  pauseAfterRound: const Duration(seconds: 1),
+                  startPadding: 0.0,
                 ),
-                const Spacer(),
-                Icon(
-                  Icons.movie,
-                  color: isHovered ? Colors.white : Colors.white70,
-                  size: 13,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  type,
-                  style: GoogleFonts.rubik(
+              ),
+              const SizedBox(height: 6),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.calendar_month,
                     color: isHovered ? Colors.white : Colors.white70,
-                    fontSize: 12,
+                    size: 13,
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 2),
+                  Text(
+                    year,
+                    style: GoogleFonts.rubik(
+                      color: isHovered ? Colors.white : Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    Icons.movie,
+                    color: isHovered ? Colors.white : Colors.white70,
+                    size: 13,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    type,
+                    style: GoogleFonts.rubik(
+                      color: isHovered ? Colors.white : Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -543,7 +535,9 @@ class _HoverableRecentItemState extends State<_HoverableRecentItem> {
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
-    final imageUrl = item.bannerImage ?? 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/1-OquNCNB6srGe.jpg';
+    final imageUrl =
+        item.bannerImage ??
+        'https://s4.anilist.co/file/anilistcdn/media/anime/banner/1-OquNCNB6srGe.jpg';
 
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
@@ -559,12 +553,12 @@ class _HoverableRecentItemState extends State<_HoverableRecentItem> {
           borderRadius: BorderRadius.circular(15),
           boxShadow: isHovered
               ? [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.5),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ]
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ]
               : [],
           image: DecorationImage(
             image: CachedNetworkImageProvider(imageUrl),
@@ -573,29 +567,29 @@ class _HoverableRecentItemState extends State<_HoverableRecentItem> {
         ),
         child: isHovered
             ? Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            gradient: LinearGradient(
-              colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: Center(
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.play_arrow,
-                color: Colors.white,
-                size: 30,
-              ),
-            ),
-          ),
-        )
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  gradient: LinearGradient(
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                ),
+              )
             : null,
       ),
     );

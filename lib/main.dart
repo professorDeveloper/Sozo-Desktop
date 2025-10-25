@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sozodesktop/src/di/get_it.dart';
 import 'package:sozodesktop/src/features/categories/categories_page.dart';
+import 'package:sozodesktop/src/features/detail/details_screen.dart';
 import 'package:sozodesktop/src/features/main/screen/main_screen.dart';
 import 'package:sozodesktop/src/features/search/screen/search_screen.dart';
 void main() {
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
+        useMaterial3: false,
         // This is the theme of your application.
         //
         // TRY THIS: Try running your application with "flutter run". You'll see
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: MainScreen()
+      home: DetailsScreen()
     );
   }
 }

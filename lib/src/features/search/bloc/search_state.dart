@@ -7,6 +7,11 @@ final class SearchInitial extends SearchState {}
 
 class SearchLoading extends SearchState {}
 
+class SearchTrendingLoading extends SearchState {
+  final List<HomeAnimeModel> previousResults;
+
+  SearchTrendingLoading(this.previousResults);
+}
 class SearchLoaded extends SearchState {
   final List<HomeAnimeModel> results;
 
