@@ -217,6 +217,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.7"
+  fade_in_animation:
+    dependency: "direct dev"
+    description:
+      name: fade_in_animation
+      sha256: dd45daaf93f5167238a24cc2c18bd04d6259ed95baaea9dbd94705abde3ab65b
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   fading_edge_scrollview:
     dependency: transitive
     description:

@@ -1,4 +1,8 @@
-// Step 3: Define your GraphQL query
+// queries.dart
+
+// Step 3: Define your GraphQL queries
+
+// --- Banner Query ---
 const String bannerQuery = '''query getBanner {
   Page(page: 1, perPage: 9) {
     media(sort: POPULARITY_DESC, type: ANIME, isAdult: false) {
@@ -17,6 +21,8 @@ const String bannerQuery = '''query getBanner {
   }
 }
 ''';
+
+// --- Recommendations Query ---
 const String reccomendationQuery = '''query getRecommendations {
   Page(page: 1, perPage: 30) {
     media(sort: SCORE_DESC, type: ANIME, isAdult: false) {
@@ -24,11 +30,11 @@ const String reccomendationQuery = '''query getRecommendations {
       format
       episodes
       genres
-      coverImage{
-          large
-          medium
-          extraLarge
-        }
+      coverImage {
+        large
+        medium
+        extraLarge
+      }
       season
       seasonYear
       title {
@@ -40,6 +46,8 @@ const String reccomendationQuery = '''query getRecommendations {
   }
 }
 ''';
+
+// --- Trending Query ---
 const String trendingQuery = '''query getTrending {
   Page(page: 1, perPage: 30) {
     media(sort: TRENDING_DESC, type: ANIME, isAdult: false) {
@@ -54,16 +62,17 @@ const String trendingQuery = '''query getTrending {
       }
       bannerImage
       description
-      coverImage{
-          large
-          medium
-          extraLarge
-        }
+      coverImage {
+        large
+        medium
+        extraLarge
+      }
     }
   }
 }
-
 ''';
+
+// --- Most Favourite Query ---
 const String mostFavouriteQuery = '''query getPopular {
   Page(page: 1, perPage: 30) {
     media(sort: POPULARITY_DESC, type: ANIME, isAdult: false) {
@@ -73,11 +82,11 @@ const String mostFavouriteQuery = '''query getPopular {
       genres
       season
       seasonYear
-      coverImage{
-          large
-          medium
-          extraLarge
-        }
+      coverImage {
+        large
+        medium
+        extraLarge
+      }
       title {
         english
       }
@@ -88,6 +97,7 @@ const String mostFavouriteQuery = '''query getPopular {
 }
 ''';
 
+// --- Search Query ---
 const String searchQuery = '''
 query searchAnime(\$search: String) {
   Page(page: 1, perPage: 20) {
@@ -120,4 +130,159 @@ query searchAnime(\$search: String) {
   }
 }
 ''';
-const String getGenres='''{GenreCollection}''';
+
+const String getGenres = '''{ GenreCollection }''';
+
+// --- Anime Detail Query ---
+const String getAnimeByIdQuery = '''query getAnimeById(\$id: Int) {
+  Media(id: \$id) {
+    id
+    idMal
+    episodes
+    countryOfOrigin
+    isAdult
+    trailer {
+      site
+      thumbnail
+    }
+    title {
+      english
+    }
+    seasonYear
+    coverImage {
+      large
+      extraLarge
+    }
+    bannerImage
+    countryOfOrigin
+    externalLinks {
+      site
+      url
+    }
+    hashtag
+    airingSchedule {
+      nodes {
+        airingAt
+        timeUntilAiring
+        episode
+      }
+    }
+    staff {
+      nodes {
+        image {
+          medium
+        }
+        name {
+          userPreferred
+        }
+      }
+    }
+    studios {
+      nodes {
+        name
+      }
+    }
+    episodes
+    externalLinks {
+      url
+    }
+    source
+    meanScore
+    averageScore
+    genres
+    description
+  }
+}
+''';
+
+// --- Characters by Anime ID ---
+const String getCharactersAnimeByIdQuery = '''query getCharactersAnimeById(\$id: Int) {
+  Media(id: \$id) {
+    characters {
+      nodes {
+        id
+        name {
+          userPreferred
+          middle
+        }
+        age
+        image {
+          medium
+        }
+      }
+    }
+  }
+}
+''';
+
+// --- Character Detail Query ---
+const String getCharacterDetailQuery = '''query getCharacterDetail(\$id: Int) {
+  Character(id: \$id) {
+    favourites
+    isFavourite
+    age
+    name {
+      userPreferred
+      middle
+      alternative
+    }
+    gender
+    image {
+      medium
+    }
+    media {
+      nodes {
+        id
+        title {
+          userPreferred
+        }
+        studios {
+          nodes {
+            name
+          }
+        }
+        coverImage {
+          large
+        }
+        mediaListEntry {
+          status
+        }
+        genres
+        hashtag
+        meanScore
+        averageScore
+      }
+    }
+  }
+}
+''';
+
+// --- Relations Query ---
+const String getRelationsByIdQuery = '''query getRelationsById(\$page: Int) {
+  Page(page: \$page, perPage: 7) {
+    mediaTrends {
+      media {
+        id
+        title {
+          userPreferred
+        }
+        studios {
+          nodes {
+            name
+          }
+        }
+        coverImage {
+          large
+        }
+        mediaListEntry {
+          status
+        }
+        genres
+        hashtag
+        meanScore
+        averageScore
+      }
+    }
+  }
+}
+''';

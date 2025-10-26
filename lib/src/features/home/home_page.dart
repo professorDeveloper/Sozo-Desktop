@@ -405,7 +405,7 @@ class _HoverableListItemState extends State<_HoverableListItem> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetailsScreen(),
+                builder: (context) => DetailsScreen(animeid: 21,),
               ),
             );
           },

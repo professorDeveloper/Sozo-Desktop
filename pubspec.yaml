@@ -62,6 +62,7 @@ dev_dependencies:
   go_router: ^16.0.0
 
   crystal_navigation_bar: ^1.0.4
+  fade_in_animation: ^0.0.3
   permission_handler: ^12.0.1
   flutter_plugin_android_lifecycle: ^2.0.18 # yoki undan yangi, tavsiya: ^2.0.28
   hl_image_picker: ^1.2.16

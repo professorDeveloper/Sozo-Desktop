@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:sozodesktop/src/core/model/responses/media.dart';
 
-class AboutScreen extends StatelessWidget {
-  const AboutScreen({super.key});
+class AboutScreen extends StatefulWidget {
+  final Media anime;
 
+  const AboutScreen({super.key, required this.anime});
+
+  @override
+  State<AboutScreen> createState() => _AboutScreenState();
+}
+
+class _AboutScreenState extends State<AboutScreen> {
   Widget _buildChip(String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -44,6 +52,14 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Media anime = widget.anime;
+    String description = anime.description ?? 'No description available';
+    // Basic HTML cleanup
+    description = description
+        .replaceAll('<br>', '\n')
+        .replaceAll('<b>', '')
+        .replaceAll('</b>', '');
+
     return Scaffold(
       backgroundColor: const Color(0xFF0D0E10),
       body: SingleChildScrollView(
@@ -57,11 +73,12 @@ class AboutScreen extends StatelessWidget {
               height: 570,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                image: const DecorationImage(
+                image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
-                    "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-ELSYx3yMPcKM.jpg",
+                    anime.coverImage?.large ?? 'https://via.placeholder.com/350x570',
                   ),
+                  onError: (exception, stackTrace) => const AssetImage('assets/placeholder.jpg'),
                 ),
               ),
             ),
@@ -72,15 +89,9 @@ class AboutScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
-                        "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, "
-                        "when an unknown printer took a galley of type and scrambled it to make a type specimen book. "
-                        "It has survived not only five centuries, but also the leap into electronic typesetting, "
-                        "remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset "
-                        "sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like "
-                        "Aldus PageMaker including versions of Lorem Ipsum.",
-                    style: TextStyle(
+                  Text(
+                    description,
+                    style: const TextStyle(
                       color: Color(0xFF8B9498),
                       fontSize: 16,
                       height: 1.5,
@@ -92,26 +103,21 @@ class AboutScreen extends StatelessWidget {
 
                   // Info rows
                   _buildInfoRow("Ishlab chiqilgan sana", [
-                    _buildChip("2020"),
+                    _buildChip(anime.seasonYear?.toString() ?? 'N/A'),
                   ]),
                   _buildInfoRow("Davlat", [
-                    _buildChip("AQSH"),
-                    _buildChip("Fransiya"),
+                    _buildChip(anime.countryOfOrigin ?? 'N/A'),
                   ]),
                   _buildInfoRow("Davomiyligi", [
                     const Text(
-                      "1 soat 40 daqiqa",
+                      "N/A", // Duration not available in Media model
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ]),
-                  _buildInfoRow("Janr", [
-                    _buildChip("Fantasiya"),
-                    _buildChip("Jangari"),
-                    _buildChip("Dramma"),
-                  ]),
+                  _buildInfoRow("Janr", anime.genres?.map((genre) => _buildChip(genre)).toList() ?? []),
                   _buildInfoRow("Reyting", [
                     const Text(
                       "IMDb ",
@@ -121,9 +127,9 @@ class AboutScreen extends StatelessWidget {
                         fontSize: 18,
                       ),
                     ),
-                    const Text(
-                      "8.7",
-                      style: TextStyle(
+                    Text(
+                      "${(anime.meanScore ?? 0) / 10}",
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                       ),
@@ -131,13 +137,23 @@ class AboutScreen extends StatelessWidget {
                   ]),
                   _buildInfoRow("Tili", [
                     const Text(
-                      "Russ tili, O‘zbekcha",
+                      "Russ tili, O‘zbekcha", // Hardcoded as not in Media model
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ]),
+                  if (anime.studios?.nodes != null)
+                    _buildInfoRow(
+                      "Studios",
+                      anime.studios!.nodes!.map((studio) => _buildChip(studio.name ?? 'N/A')).toList(),
+                    ),
+                  if (anime.staff?.nodes != null)
+                    _buildInfoRow(
+                      "Staff",
+                      anime.staff!.nodes!.map((staff) => _buildChip(staff.name?.userPreferred ?? 'N/A')).toList(),
+                    ),
                 ],
               ),
             ),
