@@ -1,14 +1,17 @@
+import 'dart:async';
+import 'dart:ui';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marquee/marquee.dart';
+
 import '../../../core/constants/app_color.dart';
 import '../../home/model/home_anime_model.dart';
 import '../bloc/search_bloc.dart';
-import '../bloc/search_event.dart' hide SearchError, SearchEmpty, SearchLoaded, SearchState, SearchLoading;
-import 'dart:ui';
-import 'dart:async';
+import '../bloc/search_event.dart'
+    hide SearchError, SearchEmpty, SearchLoaded, SearchState, SearchLoading;
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -138,7 +141,7 @@ class _SearchScreenState extends State<SearchScreen>
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            height: 56,
+            height: 50,
             decoration: ShapeDecoration(
               color: Colors.white.withOpacity(_isSearchActive ? 0.12 : 0.08),
               shape: RoundedRectangleBorder(
@@ -152,12 +155,12 @@ class _SearchScreenState extends State<SearchScreen>
               ),
               shadows: _isSearchActive
                   ? [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 4),
-                ),
-              ]
+                      BoxShadow(
+                        color: Colors.white.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
                   : null,
             ),
             child: TextField(
@@ -192,19 +195,19 @@ class _SearchScreenState extends State<SearchScreen>
                 ),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? AnimatedScale(
-                  scale: 1.0,
-                  duration: const Duration(milliseconds: 200),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.clear_rounded,
-                      color: Colors.white.withOpacity(0.8),
-                      size: 20,
-                    ),
-                    onPressed: _clearSearch,
-                    splashRadius: 20,
-                    splashColor: Colors.white.withOpacity(0.1),
-                  ),
-                )
+                        scale: 1.0,
+                        duration: const Duration(milliseconds: 200),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.clear_rounded,
+                            color: Colors.white.withOpacity(0.8),
+                            size: 20,
+                          ),
+                          onPressed: _clearSearch,
+                          splashRadius: 20,
+                          splashColor: Colors.white.withOpacity(0.1),
+                        ),
+                      )
                     : null,
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
@@ -355,10 +358,7 @@ class _SearchScreenState extends State<SearchScreen>
           padding: const EdgeInsets.fromLTRB(25, 10, 25, 16),
           child: Text(
             'Trending Anime',
-            style: GoogleFonts.daysOne(
-              color: Colors.white,
-              fontSize: 20,
-            ),
+            style: GoogleFonts.daysOne(color: Colors.white, fontSize: 20),
           ),
         ),
         Expanded(child: _buildtrendingAnime(trendingAnime)),
@@ -377,7 +377,7 @@ class _SearchScreenState extends State<SearchScreen>
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 160,
           childAspectRatio: 0.55,
-          crossAxisSpacing: 22,
+          crossAxisSpacing: 23,
           mainAxisSpacing: 20,
         ),
         itemCount: results.length,
@@ -387,6 +387,7 @@ class _SearchScreenState extends State<SearchScreen>
       ),
     );
   }
+
   Widget _buildSearchResults(List<HomeAnimeModel> results) {
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(
@@ -448,12 +449,12 @@ class _SearchAnimeItemState extends State<_SearchAnimeItem> {
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: isHovered
                       ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.4),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ]
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.4),
+                            blurRadius: 15,
+                            offset: const Offset(0, 8),
+                          ),
+                        ]
                       : [],
                 ),
                 child: ClipRRect(
@@ -462,7 +463,8 @@ class _SearchAnimeItemState extends State<_SearchAnimeItem> {
                     fit: StackFit.expand,
                     children: [
                       CachedNetworkImage(
-                        imageUrl: widget.item.coverImage?.large ??
+                        imageUrl:
+                            widget.item.coverImage?.large ??
                             'https://via.placeholder.com/300x450.png?text=No+Cover',
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Container(
@@ -509,30 +511,32 @@ class _SearchAnimeItemState extends State<_SearchAnimeItem> {
                 height: 20,
                 child: (widget.item.title?.english?.length ?? 0) > 15
                     ? Marquee(
-                  text: widget.item.title?.english ?? 'Unknown',
-                  style: GoogleFonts.daysOne(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight:
-                    isHovered ? FontWeight.bold : FontWeight.normal,
-                  ),
-                  scrollAxis: Axis.horizontal,
-                  blankSpace: 40.0,
-                  velocity: 30.0,
-                  pauseAfterRound: const Duration(seconds: 1),
-                  startPadding: 0.0,
-                )
+                        text: widget.item.title?.english ?? 'Unknown',
+                        style: GoogleFonts.daysOne(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: isHovered
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
+                        scrollAxis: Axis.horizontal,
+                        blankSpace: 40.0,
+                        velocity: 30.0,
+                        pauseAfterRound: const Duration(seconds: 1),
+                        startPadding: 0.0,
+                      )
                     : Text(
-                  widget.item.title?.english ?? 'Unknown',
-                  style: GoogleFonts.daysOne(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight:
-                    isHovered ? FontWeight.bold : FontWeight.normal,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                        widget.item.title?.english ?? 'Unknown',
+                        style: GoogleFonts.daysOne(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: isHovered
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
               ),
               const SizedBox(height: 6),
               Row(

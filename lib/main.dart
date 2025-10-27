@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sozodesktop/src/di/get_it.dart';
-import 'package:sozodesktop/src/features/categories/categories_page.dart';
-import 'package:sozodesktop/src/features/detail/bloc/detail_bloc.dart';
-import 'package:sozodesktop/src/features/detail/details_screen.dart';
 import 'package:sozodesktop/src/features/main/screen/main_screen.dart';
-import 'package:sozodesktop/src/features/search/screen/search_screen.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   setupDependencies();
@@ -40,10 +35,11 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: BlocProvider(
-        create: (context) => getIt<DetailBloc>(),
-        child:  DetailsScreen(animeid: 21,),
-      ),
+      home: MainScreen(),
+      // BlocProvider(
+      //   create: (context) => getIt<DetailBloc>(),
+      //   child: DetailsScreen(animeid: 21),
+      // ),
     );
   }
 }
