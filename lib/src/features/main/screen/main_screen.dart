@@ -1,14 +1,14 @@
+import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sozodesktop/src/core/constants/app_color.dart';
-import 'package:sozodesktop/src/core/constants/app_icons.dart';
+import 'package:sozodesktop/src/features/categories/bloc/categories_bloc.dart';
 import 'package:sozodesktop/src/features/search/bloc/search_bloc.dart';
 import 'package:sozodesktop/src/features/search/screen/search_screen.dart';
-import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sozodesktop/src/features/tv/bloc/channel_bloc.dart';
 import 'package:sozodesktop/src/features/tv/tv_page.dart';
+
 import '../../../di/get_it.dart';
 import '../../categories/categories_page.dart';
 import '../../home/bloc/home_bloc.dart';
@@ -44,8 +44,8 @@ class _MainScreenState extends State<MainScreen> {
       child: const TvScreen(), // Reused for settings; adjust if needed
     ),
     BlocProvider(
-      create: (context) => getIt<HomeBloc>(),
-      child: const BrowseAnimePage(),
+      create: (context) => getIt<CategoriesBloc>(),
+      child: const BrowseAnimePage(), // Reused for settings; adjust if needed
     ),
     BlocProvider(
       create: (context) => getIt<HomeBloc>(),
@@ -114,19 +114,19 @@ class _MainScreenState extends State<MainScreen> {
                             )
                           : null,
                     ),
-            CrystalNavigationBarItem(
-              icon: CupertinoIcons.square_grid_2x2,
-              selectedColor: Colors.white,
-              unselectedColor: Colors.grey,
-              badge: isSearchHovered
-                  ? const Badge(
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                largeSize: 16,
-                smallSize: 12,
-              )
-                  : null,
-            ),
+                    CrystalNavigationBarItem(
+                      icon: CupertinoIcons.square_grid_2x2,
+                      selectedColor: Colors.white,
+                      unselectedColor: Colors.grey,
+                      badge: isSearchHovered
+                          ? const Badge(
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              largeSize: 16,
+                              smallSize: 12,
+                            )
+                          : null,
+                    ),
                     CrystalNavigationBarItem(
                       icon: CupertinoIcons.settings,
                       selectedColor: Colors.white,
