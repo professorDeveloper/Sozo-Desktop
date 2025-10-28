@@ -223,6 +223,8 @@ class _SearchScreenState extends State<SearchScreen>
     );
   }
 
+  //testing github
+
   Widget _buildContent() {
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
