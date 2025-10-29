@@ -270,6 +270,7 @@ class _AboutScreenState extends State<AboutScreen> {
               'Your Name',
               'https://github.com/yourusername',
             ),
+            const SizedBox(height: 16),
             _buildDeveloperItem(
               'Co-lead Developer',
               'Backend Dev',
