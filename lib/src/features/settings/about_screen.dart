@@ -267,25 +267,25 @@ class _AboutScreenState extends State<AboutScreen> {
           children: [
             _buildDeveloperItem(
               'Lead Developer',
-              'Your Name',
+              'Name',
               'https://github.com/yourusername',
             ),
             const SizedBox(height: 16),
             _buildDeveloperItem(
               'Co-lead Developer',
-              'Backend Dev',
+              'Name',
               'https://github.com/backend',
             ),
             const SizedBox(height: 16),
             _buildDeveloperItem(
               'UI/UX Designer',
-              'Designer Name',
+              'Name',
               'https://github.com/designer',
             ),
             const SizedBox(height: 16),
             _buildDeveloperItem(
               'Backend Developer',
-              'Backend Dev',
+              'Dev',
               'https://github.com/backend',
             ),
           ],

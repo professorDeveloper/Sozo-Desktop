@@ -11,6 +11,7 @@ import '../home/model/home_anime_model.dart';
 import 'bloc/categories_bloc.dart';
 import 'bloc/categories_event.dart';
 import 'bloc/categories_state.dart';
+import 'genre_image_service.dart';
 
 class BrowseAnimePage extends StatefulWidget {
   const BrowseAnimePage({super.key});
@@ -21,6 +22,7 @@ class BrowseAnimePage extends StatefulWidget {
 
 class _BrowseAnimePageState extends State<BrowseAnimePage>
     with SingleTickerProviderStateMixin {
+  final Map<String, String?> _prefetchedGenreImages = {};
   late TabController _tabController;
   final ScrollController _animeScrollController = ScrollController();
   final ScrollController _genreAnimeScrollController = ScrollController();
@@ -155,7 +157,6 @@ class _BrowseAnimePageState extends State<BrowseAnimePage>
   Widget _buildAllAnimeTab() {
     return BlocBuilder<CategoriesBloc, CategoriesState>(
       builder: (context, state) {
-        // Handle initial state - show loading
         if (state is CategoriesInitial) {
           return const Center(
             child: CircularProgressIndicator(
@@ -274,6 +275,24 @@ class _BrowseAnimePageState extends State<BrowseAnimePage>
   }
 
   Widget _buildGenresList(List<String> genres) {
+    if (_prefetchedGenreImages.isEmpty) {
+      print('Starting image prefetch for ${genres.length} genres');
+      GenreImageService.prefetchGenres(genres)
+          .then((map) {
+            if (!mounted) return;
+            print(
+              'Prefetch complete. Got ${map.entries.where((e) => e.value != null).length} images',
+            );
+            setState(() {
+              _prefetchedGenreImages.clear();
+              _prefetchedGenreImages.addAll(map);
+            });
+          })
+          .catchError((error) {
+            print('Error prefetching genre images: $error');
+          });
+    }
+
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(
         dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
@@ -289,12 +308,13 @@ class _BrowseAnimePageState extends State<BrowseAnimePage>
         ),
         itemCount: genres.length,
         itemBuilder: (context, index) {
+          final genre = genres[index];
+          final selectedImage = _prefetchedGenreImages[genre];
           return _GenreCard(
-            genre: genres[index],
+            genre: genre,
+            selectedImage: selectedImage,
             onTap: () {
-              context.read<CategoriesBloc>().add(
-                LoadGenreAnime(genre: genres[index]),
-              );
+              context.read<CategoriesBloc>().add(LoadGenreAnime(genre: genre));
             },
           );
         },
@@ -502,8 +522,13 @@ class _BrowseAnimePageState extends State<BrowseAnimePage>
 class _GenreCard extends StatefulWidget {
   final String genre;
   final VoidCallback onTap;
+  final String? selectedImage;
 
-  const _GenreCard({required this.genre, required this.onTap});
+  const _GenreCard({
+    required this.genre,
+    required this.onTap,
+    this.selectedImage,
+  });
 
   @override
   State<_GenreCard> createState() => _GenreCardState();
@@ -511,6 +536,23 @@ class _GenreCard extends StatefulWidget {
 
 class _GenreCardState extends State<_GenreCard> {
   bool isHovered = false;
+
+  // Map of genre to background image URLs
+  final Map<String, String> _genreImages = {
+    'Action': '', // Attack on Titan
+    'Adventure': '', // One Piece
+    'Comedy': '', // Gintama
+    'Drama': '', // Your Lie in April
+    'Fantasy': '', // Made in Abyss
+    'Horror': '', // Tokyo Ghoul
+    'Mystery': '', // Death Note
+    'Romance': '', // Your Name
+    'Sci-Fi': '', // Steins;Gate
+    'Slice of Life': '', // K-On!
+    'Sports': '',
+    'Supernatural': '',
+    'Thriller': 'https://i.imgur.com/bvmq0SN.jpg', // Monster
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -522,9 +564,6 @@ class _GenreCardState extends State<_GenreCard> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: isHovered
-                ? Colors.white.withOpacity(0.15)
-                : Colors.white.withOpacity(0.08),
             borderRadius: BorderRadius.circular(15),
             border: Border.all(
               color: isHovered
@@ -533,15 +572,108 @@ class _GenreCardState extends State<_GenreCard> {
               width: 1,
             ),
           ),
-          child: Center(
-            child: Text(
-              widget.genre,
-              style: GoogleFonts.rubik(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: isHovered ? FontWeight.w600 : FontWeight.w400,
-              ),
-              textAlign: TextAlign.center,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Builder(
+                    builder: (context) {
+                      final imageUrl =
+                          widget.selectedImage ?? _genreImages[widget.genre];
+
+                      if (imageUrl == null || imageUrl.isEmpty) {
+                        print('No image URL for genre: ${widget.genre}');
+                        return Image.asset(
+                          'assets/images/img.png',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            print('Failed to load fallback image: $error');
+                            return Container(
+                              color: Colors.grey.withOpacity(0.2),
+                              child: Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.white.withOpacity(0.5),
+                                  size: 24,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }
+
+                      return CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.cover,
+                        fadeInDuration: const Duration(milliseconds: 300),
+                        placeholder: (context, url) => Container(
+                          color: Colors.white.withOpacity(0.08),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white.withOpacity(0.3),
+                              ),
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) {
+                          print(
+                            'Failed to load image for ${widget.genre}: $error',
+                          );
+                          return Image.asset(
+                            'assets/images/img.png',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey.withOpacity(0.2),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.broken_image,
+                                    color: Colors.white.withOpacity(0.5),
+                                    size: 24,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                // Dark Overlay
+                Positioned.fill(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    decoration: BoxDecoration(
+                      color: isHovered
+                          ? Colors.black.withOpacity(0.5)
+                          : Colors.black.withOpacity(0.7),
+                    ),
+                  ),
+                ),
+                // Text
+                Center(
+                  child: Text(
+                    widget.genre,
+                    style: GoogleFonts.rubik(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: isHovered ? FontWeight.w600 : FontWeight.w400,
+                      shadows: [
+                        Shadow(
+                          offset: const Offset(1, 1),
+                          blurRadius: 3,
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
