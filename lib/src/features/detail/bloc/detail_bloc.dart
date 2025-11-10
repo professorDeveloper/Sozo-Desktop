@@ -1,9 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:sozodesktop/src/di/get_it.dart';
+import 'package:sozodesktop/src/features/detail/model/relations_model.dart';
 import 'package:sozodesktop/src/features/detail/repository/detail_repository.dart';
 
 import '../../../core/model/responses/media.dart';
+import '../../home/model/home_anime_model.dart';
 
 part 'detail_event.dart';
 part 'detail_state.dart';
@@ -19,7 +21,8 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
     emit(AboutLoading());
     try {
       final response = await detailRepository.getAnimeByID(event.animeId);
-      if (response.data != null) {
+
+      if (response.data != null && response.data is Media) {
         emit(AboutLoaded(response.data as Media));
       } else {
         emit(AboutError(response.errorText ?? 'Unknown error occurred'));

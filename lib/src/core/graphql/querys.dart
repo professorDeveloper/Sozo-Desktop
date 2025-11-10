@@ -1,6 +1,4 @@
-// queries.dart
 
-// Step 3: Define your GraphQL queries
 
 // --- Banner Query ---
 const String bannerQuery = '''query getBanner {
@@ -195,6 +193,7 @@ const String getAnimeByIdQuery = '''query getAnimeById(\$id: Int) {
 }
 ''';
 
+
 // --- Characters by Anime ID ---
 const String getCharactersAnimeByIdQuery = '''query getCharactersAnimeById(\$id: Int) {
   Media(id: \$id) {
@@ -264,16 +263,21 @@ const String getRelationsByIdQuery = '''query getRelationsById(\$page: Int) {
       media {
         id
         title {
-          userPreferred
+        english
+        userPreferred
         }
         studios {
           nodes {
             name
           }
         }
+        genres
+        format
         coverImage {
-          large
-        }
+        large
+        medium
+        extraLarge
+      }
         mediaListEntry {
           status
         }
@@ -286,3 +290,4 @@ const String getRelationsByIdQuery = '''query getRelationsById(\$page: Int) {
   }
 }
 ''';
+

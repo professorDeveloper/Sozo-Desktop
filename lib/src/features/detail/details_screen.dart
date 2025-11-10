@@ -6,8 +6,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sozodesktop/src/core/constants/app_color.dart';
 import 'package:sozodesktop/src/core/model/responses/media.dart';
 import 'package:sozodesktop/src/features/detail/about_screen.dart';
+import 'package:sozodesktop/src/features/detail/characters_screen.dart';
 import 'package:sozodesktop/src/features/detail/bloc/detail_bloc.dart';
+import 'package:sozodesktop/src/features/detail/episodes/episodes_screen.dart';
+import 'package:sozodesktop/src/features/detail/model/relations_model.dart';
+import 'package:sozodesktop/src/features/home/model/home_anime_model.dart';
 import '../extrawidgets/kenbursview.dart';
+import 'bloc/character_bloc.dart';
+import 'episodes/bloc/episodes_bloc.dart';
 
 class DetailsScreen extends StatefulWidget {
   final int animeid;
@@ -18,19 +24,27 @@ class DetailsScreen extends StatefulWidget {
   State<DetailsScreen> createState() => _DetailsScreenState();
 }
 
-class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateMixin {
+class _DetailsScreenState extends State<DetailsScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    // Fetch anime details from API
-    context.read<DetailBloc>().add(FetchAnimeDetails(widget.animeid));
+    _tabController = TabController(length: 2, vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bloc = context.read<DetailBloc>();
+      if (!bloc.isClosed) {
+        bloc.add(FetchAnimeDetails(widget.animeid));
+      }
+    });
   }
 
   @override
   void dispose() {
+    context.read<DetailBloc>().close(); // Faqat factory bo'lsa kerak
+
     _tabController.dispose();
     super.dispose();
   }
@@ -43,9 +57,7 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
         builder: (context, state) {
           if (state is AboutLoading) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ),
+              child: CircularProgressIndicator(color: Colors.white),
             );
           }
 
@@ -73,7 +85,9 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
                     const SizedBox(height: 24),
                     ElevatedButton.icon(
                       onPressed: () {
-                        context.read<DetailBloc>().add(FetchAnimeDetails(widget.animeid));
+                        context.read<DetailBloc>().add(
+                          FetchAnimeDetails(widget.animeid),
+                        );
                       },
                       icon: const Icon(Icons.refresh),
                       label: const Text('Retry'),
@@ -91,9 +105,7 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(
                         'Go Back',
-                        style: GoogleFonts.rubik(
-                          color: Colors.white70,
-                        ),
+                        style: GoogleFonts.rubik(color: Colors.white70),
                       ),
                     ),
                   ],
@@ -104,7 +116,7 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
 
           if (state is AboutLoaded) {
             print(state.anime.title!.english.toString());
-            print(state.anime.description.toString()  );
+            print(state.anime.description.toString());
             print(state.anime.countryOfOrigin!.toString());
             return _buildContent(state.anime);
           }
@@ -122,52 +134,54 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
+              elevation: 0,
               expandedHeight: 800,
+              collapsedHeight: 80,
               floating: false,
               automaticallyImplyLeading: false,
               pinned: true,
               backgroundColor: AppColors.backgroundColor,
               flexibleSpace: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
-                  final bool collapsed = constraints.biggest.height <= kToolbarHeight + 40;
+                  final bool collapsed = constraints.biggest.height <= 100;
                   return FlexibleSpaceBar(
                     centerTitle: false,
-                    titlePadding: EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: collapsed ? 15 : 0,
+                    titlePadding: EdgeInsets.only(
+                      left: collapsed ? 18 : 0,
+                      bottom: collapsed ? 20 : 0,
                     ),
                     title: collapsed
-                        ? GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              anime.title!.english.toString(),
-                              style: GoogleFonts.rubik(
-                                color: Colors.white,
-                                fontSize: 23,
-                                fontWeight: FontWeight.w600,
+                        ? Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () => Navigator.of(context).pop(),
+                                child: const Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  anime.title?.english ?? 'No Title',
+                                  style: GoogleFonts.rubik(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          )
                         : null,
                     collapseMode: CollapseMode.parallax,
                     background: Stack(
                       children: [
                         KenBurnsView(
                           image: NetworkImage(
-                            anime.coverImage?.large ?? 'https://via.placeholder.com/1280x720',
+                            anime.bannerImage ?? anime.coverImage?.large ?? "",
                           ),
                         ),
                         Positioned(
@@ -196,7 +210,7 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              SizedBox(height: 40,),
+                              SizedBox(height: 40),
                               GestureDetector(
                                 onTap: () => Navigator.of(context).pop(),
                                 child: Container(
@@ -250,7 +264,9 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
                                       vertical: 10,
                                     ),
                                     decoration: ShapeDecoration(
-                                      color: Colors.white.withValues(alpha: 0.10),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.10,
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(50),
                                       ),
@@ -272,13 +288,18 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
                                         vertical: 10,
                                       ),
                                       decoration: ShapeDecoration(
-                                        color: Colors.white.withValues(alpha: 0.10),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.10,
+                                        ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(50),
+                                          borderRadius: BorderRadius.circular(
+                                            50,
+                                          ),
                                         ),
                                       ),
                                       child: Text(
-                                        anime.countryOfOrigin.toString()+' Country',
+                                        anime.countryOfOrigin.toString() +
+                                            ' Country',
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
@@ -293,10 +314,15 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
                               const SizedBox(height: 25),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.4,
-                                child: Text(anime.description.toString(),maxLines: 7,style: GoogleFonts.rubik(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),overflow: TextOverflow.ellipsis,),
+                                child: Text(
+                                  anime.description.toString(),
+                                  maxLines: 7,
+                                  style: GoogleFonts.rubik(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                               const SizedBox(height: 25),
                               Row(
@@ -314,12 +340,26 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       elevation: 8,
-                                      shadowColor: Colors.black.withOpacity(0.3),
+                                      shadowColor: Colors.black.withOpacity(
+                                        0.3,
+                                      ),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BlocProvider(
+                                            create: (_) => EpisodeBloc(),
+                                            // auto-search by title
+                                            child: EpisodesScreen(anime: anime),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         const Text(
                                           "Watch Now",
@@ -341,29 +381,41 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
                                   const SizedBox(width: 15),
                                   Flexible(
                                     child: SizedBox(
-                                      width: MediaQuery.of(context).size.width * 0.35 > 240
+                                      width:
+                                          MediaQuery.of(context).size.width *
+                                                  0.35 >
+                                              240
                                           ? 230
-                                          : MediaQuery.of(context).size.width * 0.35 < 150
+                                          : MediaQuery.of(context).size.width *
+                                                    0.35 <
+                                                150
                                           ? 150
-                                          : MediaQuery.of(context).size.width * 0.35,
+                                          : MediaQuery.of(context).size.width *
+                                                0.35,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.white.withOpacity(0.10),
+                                          backgroundColor: Colors.white
+                                              .withOpacity(0.10),
                                           foregroundColor: Colors.white,
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 44,
                                             vertical: 24,
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
                                           ),
                                           elevation: 8,
-                                          shadowColor: Colors.black.withOpacity(0.3),
+                                          shadowColor: Colors.black.withOpacity(
+                                            0.3,
+                                          ),
                                         ),
                                         onPressed: () {},
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             const Text(
                                               "Treyler",
@@ -387,7 +439,6 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
                                 ],
                               ),
                               const SizedBox(height: 25),
-
                             ],
                           ),
                         ),
@@ -418,7 +469,6 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
                   tabs: const [
                     Tab(text: 'Film haqida'),
                     Tab(text: 'Prodyuser va akterlar'),
-                    Tab(text: 'Izohlar'),
                   ],
                 ),
               ),
@@ -429,117 +479,11 @@ class _DetailsScreenState extends State<DetailsScreen> with TickerProviderStateM
           controller: _tabController,
           children: [
             AboutScreen(anime: anime),
-            _buildProducersTab(anime),
-            _buildCommentsTab(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProducersTab(Media anime) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (anime.studios?.nodes != null && anime.studios!.nodes!.isNotEmpty) ...[
-              Text(
-                'Studios',
-                style: GoogleFonts.rubik(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 12),
-              ...anime.studios!.nodes!.map((studio) => Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    studio.name ?? 'Unknown Studio',
-                    style: GoogleFonts.rubik(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              )),
-              const SizedBox(height: 24),
-            ],
-            if (anime.staff?.nodes != null && anime.staff!.nodes!.isNotEmpty) ...[
-              Text(
-                'Staff',
-                style: GoogleFonts.rubik(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 12),
-              ...anime.staff!.nodes!.map((staff) => Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    staff.name?.userPreferred ?? 'Unknown Staff',
-                    style: GoogleFonts.rubik(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              )),
-            ],
-            if ((anime.studios?.nodes == null || anime.studios!.nodes!.isEmpty) &&
-                (anime.staff?.nodes == null || anime.staff!.nodes!.isEmpty))
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Text(
-                    'No producer or staff information available',
-                    style: GoogleFonts.rubik(
-                      color: Colors.white60,
-                      fontSize: 16,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCommentsTab() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Center(
-          child: Text(
-            'Izohlar content goes here...',
-            style: GoogleFonts.rubik(
-              color: Colors.white,
-              fontSize: 16,
+            BlocProvider(
+              create: (context) => CharactersBloc(),
+              child: CharactersScreen(mediaId: anime.id!),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -558,7 +502,11 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(color: AppColors.backgroundColor, child: _tabBar);
   }
 
