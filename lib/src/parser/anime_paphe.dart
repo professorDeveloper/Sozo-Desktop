@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:sozodesktop/src/parser/models/response.dart';
+import 'package:sozodesktop/src/parser/unpacker.dart';
 import 'package:sozodesktop/src/parser/utils.dart';
 import 'base_parser.dart';
 import 'models/episode_data.dart';
@@ -55,8 +56,11 @@ class AnimePahe extends BaseParser {
     final headers = await _headers();
     final url = "$hostUrl/api?m=release&id=$id&sort=episode_asc&page=$page";
     final resp = await httpClient.get(Uri.parse(url), headers: headers);
+    print(resp.body.toString());
     if (resp.statusCode != 200) return null;
-    return EpisodeData.fromJson(jsonDecode(resp.body));
+    var episodeData = EpisodeData.fromJson(jsonDecode(resp.body));
+    var session = episodeData.data![0].session.toString();
+    return episodeData;
   }
 
   Future<List<VideoOption>> getEpisodeVideo(String epId, String id) async {
@@ -68,6 +72,7 @@ class AnimePahe extends BaseParser {
     );
     for (final b in buttons) {
       final kwik = b.attributes['data-src'] ?? '';
+      print("Salom:::" + kwik);
       final fansub = b.attributes['data-fansub'] ?? '';
       final res = b.attributes['data-resolution'] ?? '';
       final audio = b.attributes['data-audio'] ?? 'jpn';
@@ -94,31 +99,56 @@ class AnimePahe extends BaseParser {
   }
 
   Future<String> extractVideo(String url) async {
-    final doc = await getJsoup(url, {"User-Agent": _ua, "Referer": hostUrl});
-    final script = doc
-        .querySelectorAll('script')
+    final doc = await getJsoup(
+      url,
+      {
+        "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0",
+        "Referer": url,
+        "Host": "kwik.cx",
+        "Alt-Used": "kwik.cx",
+        "Sec-Fetch-User": "?1",
+      },
+    );
+
+    // 1. Packed scriptni topamiz
+    final scriptElement = doc
+        .querySelectorAll("script")
         .firstWhere(
-          (s) => s.innerHtml.contains('eval(function(p,a,c,k,e,d)'),
-          orElse: () => throw Exception('Packed script not found'),
-        );
-    final unpacked = unpackJs(script.innerHtml) ?? '';
-    final m3u8 =
-        RegExp(r'https?://[^\s]+\.m3u8').firstMatch(unpacked)?.group(0) ?? '';
-    return _m3u8ToMp4(m3u8, 'file');
+          (s) => Packer.isPacked(s.innerHtml) || JsUnpacker(s.innerHtml).detect(),
+      orElse: () => throw Exception("Packed script not found"),
+    );
+
+    final scriptSource = scriptElement.innerHtml;
+    print("RAW SCRIPT:\n$scriptSource");
+
+    // 2. Unpack qilishga harakat qilamiz (avval JsUnpacker, keyin Packer)
+    String? unpacked;
+
+    final jsUnpacker = JsUnpacker(scriptSource);
+    if (jsUnpacker.detect()) {
+      unpacked = jsUnpacker.unpack();
+    } else if (Packer.isPacked(scriptSource)) {
+      // Agar sizning eski Packer ham bo‘lsa:
+      unpacked = Packer.unpack(scriptSource);
+    }
+
+    if (unpacked == null) {
+      throw Exception("Failed to unpack JS");
+    }
+
+    print("UNPACKED:\n$unpacked");
+
+    // 3. Escaped slashlarni tozalaymiz
+    final clean = unpacked.replaceAll(r"\/", "/");
+
+    // 4. .m3u8 linkni olish
+    final match = RegExp(r"""https?://[^\s"']+\.m3u8""").firstMatch(clean);
+    if (match == null) {
+      throw Exception("m3u8 url not found");
+    }
+
+    return match.group(0)!;
   }
 
-  String _m3u8ToMp4(String m3u8, String file) {
-    if (m3u8.isEmpty) return '';
-    final uri = Uri.parse(m3u8);
-    final segments = uri.pathSegments;
-    if (segments.isEmpty) return '';
-    final newSegments = segments.sublist(0, segments.length - 1);
-    newSegments[0] = 'mp4'; // /stream -> /mp4
-    final path = '/${newSegments.join('/')}';
-    return Uri(
-      scheme: uri.scheme,
-      host: uri.host,
-      path: path,
-      queryParameters: {'file': '$file.mp4'},
-    ).toString();
-  }}
+}

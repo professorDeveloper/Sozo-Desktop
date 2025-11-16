@@ -8,6 +8,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:marquee/marquee.dart';
 
 import '../../../core/constants/app_color.dart';
+import '../../../di/get_it.dart';
+import '../../detail/bloc/detail_bloc.dart';
+import '../../detail/details_screen.dart';
 import '../../home/model/home_anime_model.dart';
 import '../bloc/search_bloc.dart';
 import '../bloc/search_event.dart'
@@ -432,8 +435,17 @@ class _SearchAnimeItemState extends State<_SearchAnimeItem> {
       onExit: (_) => setState(() => isHovered = false),
       child: GestureDetector(
         onTap: () {
-          // Navigate to detail screen
-          // Navigator.push(context, MaterialPageRoute(...));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BlocProvider(
+                create: (_) =>
+                    getIt<DetailBloc>()
+                      ..add(FetchAnimeDetails(widget.item.id!)),
+                child: DetailsScreen(animeid: widget.item.id),
+              ),
+            ),
+          );
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
